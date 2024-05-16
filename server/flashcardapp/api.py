@@ -1,14 +1,17 @@
 from ninja import NinjaAPI, Schema
+from flashcardapp.models import Deck
 
 api = NinjaAPI()
 
 
-class DesckSchema(Schema):
-    name: str
+# class DesckSchema(Schema):
+#     name: str
 
 
-@api.get("/deck", response=DesckSchema)
+@api.get("/deck")
 def deck(request):
 
-    # query list of decks from database
-    return
+    # query list of all decks from database
+    deck_list = Deck.objects.all()
+
+    return deck_list
