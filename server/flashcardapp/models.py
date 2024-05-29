@@ -6,9 +6,9 @@ class Deck(models.Model):
 
 
 class Card(models.Model):
-    front = models.TextField()
-    back = models.TextField()
+    front = models.TextField(blank=False, null=False)
+    back = models.TextField(blank=False, null=False)
     is_learned = models.BooleanField(default=False)
     deck = models.ForeignKey(
-        "flashcardapp.Deck", related_name=("cards"), on_delete=models.CASCADE, null=True
+        "flashcardapp.deck", related_name="cards", on_delete=models.CASCADE, null=True
     )
