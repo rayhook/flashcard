@@ -12,46 +12,8 @@ class DeckSchema(Schema):
     name: str
 
 
-# Get all decks
-
-
-@api.get("/deck", response={200: List[DeckSchema]})
-def list_decks(request):
-
-    decks = Deck.objects.all()
-
-    return 200, decks
-
-
-# Get a Deck
-
-
-@api.get("/deck/{int:deck_id}", response={200: DeckSchema})
-def get_deck(request, deck_id: int):
-    deck = get_object_or_404(Deck, pk=deck_id)
-    return 200, deck
-
-
-# Create a Deck
-
-
-@api.post("/deck", response={201: DeckSchema})
-def create_deck(request, payload: DeckSchema):
-    deck = Deck.objects.create(**payload.dict())
-    return 201, deck
-
-
-# Delete a Deck
-
-
-@api.delete("/deck/{int:deck_id}", response={204: None})
-def delete_deck(request, deck_id: int):
-    deck = get_object_or_404(Deck, pk=deck_id)
-    deck.delete()
-    return 204, None
-
-
-# create card
+class DeckIdSchema(Schema):
+    deck_id: int
 
 
 class CardSchemaIn(Schema):
@@ -67,8 +29,37 @@ class CardSchemaOut(Schema):
     is_learned: bool
 
 
-class DeckIdSchema(Schema):
-    deck_id: int
+class CardUpdateSchedma(Schema):
+    front: str = None
+    back: str = None
+    is_learned: bool = None
+
+
+@api.get("/deck", response={200: List[DeckSchema]})
+def list_decks(request):
+
+    decks = Deck.objects.all()
+
+    return 200, decks
+
+
+@api.get("/deck/{int:deck_id}", response={200: DeckSchema})
+def get_deck(request, deck_id: int):
+    deck = get_object_or_404(Deck, pk=deck_id)
+    return 200, deck
+
+
+@api.post("/deck", response={201: DeckSchema})
+def create_deck(request, payload: DeckSchema):
+    deck = Deck.objects.create(**payload.dict())
+    return 201, deck
+
+
+@api.delete("/deck/{int:deck_id}", response={204: None})
+def delete_deck(request, deck_id: int):
+    deck = get_object_or_404(Deck, pk=deck_id)
+    deck.delete()
+    return 204, None
 
 
 @api.post("/card", response={201: None})
@@ -94,3 +85,17 @@ def delete_card(request, card_id: int):
     card = get_object_or_404(Card, pk=card_id)
     card.delete()
     return 204, None
+
+
+@api.put("/card/update/{int:card_id}", response={200: CardSchemaOut})
+def update_card(request, card_id: int, payload: CardUpdateSchedma):
+    card = get_object_or_404(Card, pk=card_id)
+
+    if payload.front is not None:
+        card.front = payload.front
+    if payload.back is not None:
+        card.back = payload.back
+    if payload.is_learned is not None:
+        card.is_learned = payload.is_learned
+    card.save()
+    return 200, card
