@@ -55,6 +55,15 @@ def create_deck(request, payload: DeckSchema):
     return 201, deck
 
 
+@api.put("/deck/update/{int:deck_id}", response={200: DeckSchema})
+def create_deck(request, deck_id: int, payload: DeckSchema):
+    deck = get_object_or_404(Deck, pk=deck_id)
+
+    deck.name = payload.name
+    deck.save()
+    return 200, deck
+
+
 @api.delete("/deck/{int:deck_id}", response={204: None})
 def delete_deck(request, deck_id: int):
     deck = get_object_or_404(Deck, pk=deck_id)
